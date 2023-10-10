@@ -13,4 +13,5 @@ MODLE_MAX_TOKEN = 2000
 
 #定义本地模型加载路径
 MODLE_PATH= '/temp/bigmodle/chat_c'
-
+HUGGINGFACEHUB_API_TOKEN = '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'
+MODLE_ENBEDDING = '/temp/bigmodle/sensenove'
