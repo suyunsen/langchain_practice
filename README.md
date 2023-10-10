@@ -1,0 +1,2 @@
+# langchain_practice
+主要用langchina实现各种项目
