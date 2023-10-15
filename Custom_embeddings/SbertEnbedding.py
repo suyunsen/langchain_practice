@@ -3,6 +3,8 @@
 time: 2023/10/10 22:43
 author: suyunsen
 email: suyunsen2023@gmail.com
+
+#此类主要用于自定义自己的embedding模型向量
 """
 from typing import Any, Dict, List, Optional
 

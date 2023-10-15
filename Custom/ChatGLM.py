@@ -26,7 +26,7 @@ class ChatGlm26bData(BaseModel):
 
 class ChatGlm26b(LLM):
 
-
+    history = []
     model: str = "ChatGLM2-6B"
     """Model name to use."""
 
@@ -121,5 +121,7 @@ class ChatGlm26b(LLM):
             stop = self.stop
         elif stop is None:
             stop = []
-        response, history = self.exemodel.chat(self.extokenizer, prompt, history=[])
+        print(prompt)
+        response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history)
+        self.history = history
         return response
