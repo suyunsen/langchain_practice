@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="root@10.130.71.10:30550 password (4)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="root@10.130.71.2:30550 password" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="root@10.130.71.10:30550 password (4)">
+      <paths name="root@10.130.71.2:30550 password">
         <serverdata>
           <mappings>
             <mapping deploy="/temp/bigmodle/langchian" local="$PROJECT_DIR$" />

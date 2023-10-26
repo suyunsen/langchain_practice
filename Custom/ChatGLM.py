@@ -122,6 +122,7 @@ class ChatGlm26b(LLM):
         elif stop is None:
             stop = []
         print(prompt)
+        print('------------------------------')
         response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history)
-        self.history = history
+        self.history = []
         return response

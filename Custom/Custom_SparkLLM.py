@@ -15,7 +15,7 @@ import ssl
 import websocket
 import langchain
 import logging
-from config import SPARK_APPID, SPARK_API_KEY, SPARK_API_SECRET,SPARK_URL
+from Custom.config import SPARK_APPID, SPARK_API_KEY, SPARK_API_SECRET,SPARK_URL
 from urllib.parse import urlparse
 from datetime import datetime
 from time import mktime
@@ -30,7 +30,7 @@ result_list = []
 def _construct_query(question, temperature, max_tokens):
     data = {
         "header": {
-            "app_id":'995896d3',
+            "app_id":SPARK_APPID,
             "uid": "1234"
         },
         "parameter": {

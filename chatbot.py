@@ -33,5 +33,6 @@ if __name__ == '__main__':
     question = ["你好啊","哈喽请用c++写个快排","hahhah","一元二次方程是什么时候学的"]
     for v in question:
         res = chat_custom_ChatGlm(chatbot,v)
-        # print(res)
+        print(res)
+        print('-----------------------------')
 
