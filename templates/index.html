@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天页面</title>
+    <style>
+        /* 自定义样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: url('https://unsplash.com/photos/a-woman-holding-a-small-dog-in-her-arms-ybkz7lsemxQ') repeat;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chat-box {
+            height: 450px;
+            overflow-y: scroll;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.9); /* 浅背景色 */
+        }
+        .message {
+            background-color: #ffffff;
+            color: #262626;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 5px 0;
+        }
+        .message-sender {
+            font-weight: bold;
+        }
+        .input-container {
+            display: flex;
+        }
+        .message-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .send-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/2.1.2/marked.min.js"></script>
+
+</head>
+<body>
+   <div class="chat-container">
+        <h1>政务问答机器人：+___+</h1>
+        <div class="chat-box" id="chatBox">
+            <!-- 聊天记录将在此显示 -->
+        </div>
+        <div class="input-container">
+            <input type="text" id="messageInput" class="message-input" placeholder="输入消息...">
+            <button id="sendButton" class="send-button">发送</button>
+        </div>
+        <script>
+            // JavaScript 代码将在此处添加
+            const chatBox = document.getElementById('chatBox');
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            // 发送消息的函数
+            function sendMessage() {
+                const messageText = messageInput.value.trim();
+                if (messageText !== '') {
+                    // 将用户的消息显示在聊天框中（使用Markdown转换为HTML）
+                    const userMessageElement = document.createElement('div');
+                    userMessageElement.classList.add('message');
+                    userMessageElement.classList.add('tufte');
+                    userMessageElement.innerHTML = `<span class="message-sender">You:</span> ${marked(messageText)}`;
+                    chatBox.appendChild(userMessageElement);
+
+                    // 使用fetch发送GET请求到后端
+                    fetch(`http://localhost:8080/process_chat?chat=${encodeURIComponent(messageText)}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            // 显示后端返回的响应消息（使用Markdown转换为HTML）
+                            // console.log(data)
+                            const responseMessageElement = document.createElement('div');
+                            responseMessageElement.classList.add('message');
+
+                            responseMessageElement.innerHTML = `<span class="message-sender">系统:</span> ${marked(data)}`;
+                            chatBox.appendChild(responseMessageElement);
+                            // 清空输入框
+                            messageInput.value = '';
+                            // 滚动到底部
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        })
+                        .catch(error => {
+                            console.error('发生错误:', error);
+                        });
+                }
+            }
+
+            // 监听按钮点击事件
+            sendButton.addEventListener('click', sendMessage);
+
+            // 监听回车键事件
+            messageInput.addEventListener('keyup', (event) => {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        </script>
+    </div>
+
+
+</body>
+</html>
