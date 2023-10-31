@@ -89,7 +89,7 @@
                     chatBox.appendChild(userMessageElement);
 
                     // 使用fetch发送GET请求到后端
-                    fetch(`http://localhost:8080/process_chat?chat=${encodeURIComponent(messageText)}`)
+                    fetch(`http://10.130.71.10:30892/process_chat?chat=${encodeURIComponent(messageText)}`)
                         .then(response => response.text())
                         .then(data => {
                             // 显示后端返回的响应消息（使用Markdown转换为HTML）

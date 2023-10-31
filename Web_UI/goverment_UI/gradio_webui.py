@@ -25,13 +25,14 @@ readable_history = []
 cmd_opts = parser.parse_args()
 
 templet_prompt = """
-        假如你是一名语文专家，你需要根据一下给出的内容找出问题的正确答案。
-        答案只存在给出的内容中，你知道就回答，不要自己编造答案。
-        这是给出的内容：{context}
-        问题是:{question}
-        因为你是语文专家你需要仔细分析问题和给出的内容，不要给出多余的答案。
-        按给出的内容作答，你不需要自己总结。
-       """
+         假如你是一名问答专家，你需要根据一下给出的内容找出问题的正确答案。
+         答案只存在给出的内容中，你知道就回答，不要自己编造答案。
+         因为你是问答专家你需要仔细分析问题和给出的内容，不要给出错误答案，不要给出多余的答案。
+         记住你只需要按给出的内容作答，不需要自己总结。
+         记住如果你认为问题和给出的内容相关性不大，你需要回复：请详细说明您咨询问题的地址和办理的事项。
+         以下是给出的内容：{context}
+         问题是:{question}
+        """
 llm = ChatGlm26b()
 sparkllm:Optional[Spark] = None
 qa_chain = GoQa(llm=llm,templet_prompt=templet_prompt)
@@ -92,8 +93,8 @@ def predict(query, max_length, top_p, temperature):
 
 
 def save_history():
-    if not os.path.exists("outputs"):
-        os.mkdir("outputs")
+    if not os.path.exists("./outputs"):
+        os.mkdir("./outputs")
 
     s = [{"q": i[0], "o": i[1]} for i in history]
     filename = f"save-{int(time.time())}.json"
