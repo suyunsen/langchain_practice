@@ -4,6 +4,7 @@ time: 2023/10/10 19:57
 author: suyunsen
 email: suyunsen2023@gmail.com
 """
+import logging
 from typing import Any, Dict, List, Optional
 from transformers import AutoTokenizer, AutoModel
 import requests
@@ -12,6 +13,9 @@ from langchain.llms.base import LLM
 from langchain.pydantic_v1 import BaseModel, Extra, root_validator
 from langchain.utils import get_from_dict_or_env
 import _config
+
+# 配置日志记录
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 #自定义大模型，且模型存在与本地
 class ChatGlm26bData(BaseModel):
@@ -30,7 +34,7 @@ class ChatGlm26b(LLM):
     model: str = "ChatGLM2-6B"
     """Model name to use."""
 
-    temperature: float = 0.1
+    temperature: float = 0.01
     """What sampling temperature to use."""
 
     maxTokens: int = 2048
@@ -64,11 +68,24 @@ class ChatGlm26b(LLM):
     base_url: Optional[str] = None
 
     filepath:str = _config.MODLE_PATH
-    extokenizer = AutoTokenizer.from_pretrained(filepath, trust_remote_code=True)
-    exemodel = AutoModel.from_pretrained(filepath, trust_remote_code=True).half().cuda()
-    exemodel = exemodel.eval()
+
+    extokenizer:Optional['ChatGLMTokenizer'] = None
+    exemodel:Optional['ChatGLMModel'] = None
+    class Config:
+        arbitrary_types_allowed = True
+
     """Base url to use, if None decides based on model name."""
 
+    def __init__(self,filepath:str=None):
+        super(ChatGlm26b,self).__init__()
+        if filepath is not None:
+            self.filepath = filepath
+        self.extokenizer = AutoTokenizer.from_pretrained(self.filepath, trust_remote_code=True)
+        self.exemodel = AutoModel.from_pretrained(self.filepath, trust_remote_code=True).half().cuda()
+        self.exemodel = self.exemodel.eval()
+
+    def get_model(self):
+        return  self.exemodel
     @property
     def _default_params(self) -> Dict[str, Any]:
         """Get the default parameters for calling AI21 API."""
@@ -84,6 +101,11 @@ class ChatGlm26b(LLM):
             "logitBias": self.logitBias,
         }
 
+    def set_temperature(self,temperature):
+        self.temperature = temperature
+
+    def clea_history(self):
+        self.history = []
     @property
     def _identifying_params(self) -> Dict[str, Any]:
         """Get the identifying parameters."""
@@ -93,6 +115,11 @@ class ChatGlm26b(LLM):
     def _llm_type(self) -> str:
         """Return type of llm."""
         return self.model
+
+    def set_llm_temperature(self,temperature:float):
+        if temperature < 0.01 or temperature > 0.99:
+            logging.error("超出范围")
+        self.temperature = temperature
 
     def _call(
             self,
@@ -122,7 +149,7 @@ class ChatGlm26b(LLM):
         elif stop is None:
             stop = []
         # print(prompt)
-        # print('------------------------------')
-        response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history)
+        print('------------------------------')
+        response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history,temperature=self.temperature)
         self.history = []
         return response

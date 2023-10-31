@@ -27,23 +27,35 @@ class GoQa:
 
     embeddings:Embeddings=None
 
-    faiss_index:str = None
+    faiss_index:str = "/T53/temp/bigmodle/langchian/QA/knowledges/faiss_index_test"
 
     faiss_db:FAISS = None
 
-    def __init__(self,modle_name = _config.MODLE_NAME,templet_prompt:str=None,faiss_index:str=None):
-        self.llm = ChatGlm26b()
+    def __init__(self,llm = None , templet_prompt:str=None,faiss_index:str=None):
+        if llm is not None:
+            self.llm = llm
+        else :
+            self.llm = ChatGlm26b()
         # self.llm = Spark()
         self.embeddings = SBertEmbeddings()
         self.PROMPT = PromptTemplate(template=templet_prompt,
                                 input_variables=["context", "question"])
 
-        self.faiss_db = FAISS.load_local("/temp/bigmodle/langchian/QA/knowledges/faiss_index_test", self.embeddings)
+        self.faiss_db = FAISS.load_local("/T53/temp/bigmodle/langchian/QA/knowledges/faiss_index_test", self.embeddings)
 
         self.chain = load_qa_chain(self.llm,chain_type="stuff", prompt=self.PROMPT)
 
 
-    def ask_question(self,question,topk:int = 5):
+    def ask_question(self,question,topk:int = 10):
         docs = self.faiss_db.similarity_search(query=question,k=topk)
         result = self.chain({"input_documents": docs, "question": question}, return_only_outputs=True)
         return result['output_text']
+
+    def get_faiss_index(self,faiss_index):
+        self.faiss_index = faiss_index
+
+    def set_llm_modle(self,llm):
+        self.llm = llm
+        self.chain.llm_chain.llm= llm
+
+
