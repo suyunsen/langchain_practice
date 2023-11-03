@@ -10,10 +10,11 @@ from Custom.Custom_SparkLLM import Spark
 
 
 def chatGLM():
-    q = '广东省的企业职工基本养老金网上如何申请。'
+    # q = "啊啊啊"
+    q1 = '广东省的企业职工基本养老金网上如何申请。'
     # q = "怎么办理沙坑社区城镇非职工居民独生子女保健费发放"
     # q = "怎么办理沙坑社区城镇非职工居民独生子女保健费发放问题"
-    # q = "怎么办理沙坑社区申领居住证"
+    q = "怎么办理沙坑社区申领居住证"
     # templet_prompt = """
     #     假如你是一名问答专家，你需要根据一下给出的内容找出问题的正确答案。
     #     答案只存在给出的内容中，你知道就回答，不要自己编造答案。
@@ -22,6 +23,7 @@ def chatGLM():
     #     因为你是问答专家你需要仔细分析问题和给出的内容，不要给出多余的答案。
     #     按给出的内容作答，你不需要自己总结。
     #    """
+
     templet_prompt = """
          假如你是一名问答专家，你需要根据一下给出的内容找出问题的正确答案。
          答案只存在给出的内容中，你知道就回答，不要自己编造答案。
@@ -33,9 +35,11 @@ def chatGLM():
     govermentQa = GoQa(templet_prompt=templet_prompt)
     qs = []
     qs.append(q)
+    qs.append(q1)
     for v in qs:
-        ans = govermentQa.ask_question(q, 5)
-        print(ans)
+        ans = govermentQa.ask_question(v ,6)
+        print(ans["response"])
+        # print(f"这是源{ans['source']}------------")
 def spark():
     templet_prompt = """
               根据以下内容回答问题,如果存在正确答案就回答正确答案，不存在就回答没有答案，不要自己制造答案。

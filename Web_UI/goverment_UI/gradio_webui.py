@@ -14,6 +14,11 @@ import gradio as gr
 
 from options import parser
 from typing import Optional
+import torch
+import numpy as np
+import random
+import asyncio
+from langchain.callbacks import AsyncIteratorCallbackHandler
 
 sys.path.append("../../")
 from QA.govermentQA import GoQa
@@ -69,8 +74,8 @@ def prepare_model():
 # prepare_model()
 
 
-def parse_codeblock(text):
-    lines = text.split("\n")
+def parse_codeblock(output):
+    lines = output['response'].split("\n")
     for i, line in enumerate(lines):
         if "```" in line:
             if line != "```":
@@ -80,22 +85,26 @@ def parse_codeblock(text):
         else:
             if i > 0:
                 lines[i] = "<br/>" + line.replace("<", "&lt;").replace(">", "&gt;")
-    return "".join(lines)
-
+    source = "\n\n"
+    source += "".join(
+        [f"""<details> <summary>出处 [{i + 1}]</summary>\n"""
+         f"""{doc.page_content}\n"""
+         f"""</details>"""
+         for i, doc in
+         enumerate(output['source'])])
+    return "".join(lines)+source
 
 def predict(query, max_length, top_p, temperature):
-    global history
     llm.set_llm_temperature(temperature)
     output = qa_chain.ask_question(query,int(top_p))
     readable_history.append((query, parse_codeblock(output)))
-    # print(output)
     return  readable_history
 
 
 def save_history():
     if not os.path.exists("./outputs"):
-        os.mkdir("./outputs")
-
+        # os.mkdir("./outputs")
+        pass
     s = [{"q": i[0], "o": i[1]} for i in history]
     filename = f"save-{int(time.time())}.json"
     with open(os.path.join("outputs", filename), "w", encoding="utf-8") as f:

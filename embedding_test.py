@@ -10,20 +10,24 @@ from langchain.vectorstores import FAISS
 from langchain.docstore.document import Document
 from langchain.document_loaders import text
 from QA.data_load import CSV_load
+import _config
 
 def load_faiss_index():
     embeddings = SBertEmbeddings()
-    db = FAISS.load_local("./faiss_test_index", embeddings)
+    db = FAISS.load_local(_config.VECTORSTORE_STORE_PATH, embeddings)
     query = "广东省企业职工基本养老金申领的办理流程"
     query01 = "wwww"
-    docs_and_scores = db.similarity_search(query)
-    print(docs_and_scores[0].page_content)
+    docs_and_scores = db.similarity_search(query=query,k=10,**{"score_threshold":300})
+    print(len(docs_and_scores))
+    for v in docs_and_scores:
+        print(v.page_content)
+    # print(docs_and_scores[0].page_content)
 
 if __name__ == '__main__':
-    metadata = {"source": "internet", "date": "text"}
-    text = '你好啊'
-    docs = CSV_load('./data/test.csv').one_text_document()
-    embeddings = SBertEmbeddings()
-    db = FAISS.from_documents(docs, embeddings)
-    db.save_local("./QA/knowledges/faiss_index_test")
-    # load_faiss_index()
+    # metadata = {"source": "internet", "date": "text"}
+    # text = '你好啊'
+    # docs = CSV_load('./data/test.csv').one_text_document()
+    # embeddings = SBertEmbeddings()
+    # db = FAISS.from_documents(docs, embeddings)
+    # db.save_local("./QA/knowledges/faiss_index_test")
+    load_faiss_index()

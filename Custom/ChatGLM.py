@@ -37,7 +37,7 @@ class ChatGlm26b(LLM):
     temperature: float = 0.01
     """What sampling temperature to use."""
 
-    maxTokens: int = 2048
+    maxTokens: int = 4096
     """The maximum number of tokens to generate in the completion."""
 
     minTokens: int = 0
@@ -150,6 +150,6 @@ class ChatGlm26b(LLM):
             stop = []
         # print(prompt)
         print('------------ChatGLM------------------')
-        response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history,temperature=self.temperature)
+        response, history = self.exemodel.chat(self.extokenizer, prompt, history=self.history,temperature=self.temperature,max_length=self.maxTokens)
         self.history = []
         return response
