@@ -13,14 +13,21 @@ MODLE_MAX_TOKEN = 2000
 
 #llm和embedding模型配置
 # MODLE_PATH= '/T53/temp/bigmodle/chatGLM3-6b'
-MODLE_PATH= '/T53/temp/bigmodle/chat_c'
+MODLE_PATH= '/T53/temp/bigmodel/models/chat_c'
 HUGGINGFACEHUB_API_TOKEN = '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'
-MODLE_ENBEDDING = '/T53/temp/bigmodle/sensenove'
+MODLE_ENBEDDING = '/T53/temp/bigmodel/models/sensenove'
+
+
+#baichuan的配置
+
+BAICHUAN_MODEL_PATH = '/T53/temp/bigmodel/models/baichuan'
+BAICHUAN_MODEL_PEFT_PATH = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test/checkpoint-558'
+BAICHUAN_MODEL_PEFT_PATH_2 = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test/checkpoint-1641'
 
 
 #向量数据库匹配
 #分数建议匹配200-500之间，总的分数区间是0-1100左右
 VECTORSTORE_SCORE_THRESHOLD= 300
 #加载的向量数据地址
-VECTORSTORE_STORE_PATH = "/T53/temp/bigmodle/langchian/QA/knowledges/faiss_index_test"
+VECTORSTORE_STORE_PATH = "/T53/temp/bigmodel/langchian/QA/knowledges/faiss_index_test"
 

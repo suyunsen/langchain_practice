@@ -17,6 +17,8 @@ from langchain import LLMChain
 import logging
 from Custom.Custom_SparkLLM import Spark
 
+from Custom.BaiChuan import Baichuan
+
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
@@ -64,6 +66,9 @@ class GoQa:
 
     def get_faiss_index(self,faiss_index):
         self.faiss_index = faiss_index
+
+    def get_no_konwledge_answer(self,question):
+        return {"response": self.not_template_chain.run(query=question), "source": ""}
 
     def set_llm_modle(self,llm):
         self.llm = llm

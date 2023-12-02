@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" autoUpload="Always" serverName="root@10.130.71.2:30550 password (2)" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" autoUpload="Always" serverName="root@8.134.90.66:9200 password" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
     <serverData>
-      <paths name="root@10.130.71.2:30550 password">
+      <paths name="root@8.134.90.66:9200 password">
         <serverdata>
           <mappings>
-            <mapping deploy="/T53/temp/bigmodle/langchian" local="$PROJECT_DIR$" />
-          </mappings>
-        </serverdata>
-      </paths>
-      <paths name="root@10.130.71.2:30550 password (2)">
-        <serverdata>
-          <mappings>
-            <mapping deploy="/T53/temp/bigmodle/langchian" local="$PROJECT_DIR$" />
+            <mapping deploy="/T53/temp/bigmodel/langchian" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
