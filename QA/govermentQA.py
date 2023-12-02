@@ -56,7 +56,9 @@ class GoQa:
 
 
     def ask_question(self,question,topk:int = 10):
+        print("检索开始")
         docs = self.faiss_db.similarity_search(query=question,k=topk,**{"score_threshold":self.vectorstore_score_threshold})
+        print("检索结束")
         if len(docs) > 0:
             result = self.chain({"input_documents": docs, "question": question})
             return {"response":result['output_text'],

@@ -32,7 +32,7 @@ readable_history = []
 cmd_opts = parser.parse_args()
 
 templet_prompt = """
-         假如你是一名问答专家，你需要根据一下给出的内容找出问题的正确答案。
+         假如你是一名政务问答专家，你需要根据一下给出的内容找出问题的正确答案。
          答案只存在给出的内容中，你知道就回答，不要自己编造答案。
          因为你是问答专家你需要仔细分析问题和给出的内容，不要给出错误答案，不要给出多余的答案。
          记住你只需要按给出的内容作答，不需要自己总结。
@@ -105,7 +105,7 @@ def parse_codeblock(output):
 def predict(query, max_length, top_p, temperature):
     llm.set_llm_temperature(temperature)
     output = ''
-    if head_h == Baichuan_h:
+    if head_h == Baichuan_h or head_h == Baichuan_h_2:
         output = qa_chain.get_no_konwledge_answer(query)
     else :
         output = qa_chain.ask_question(query,int(top_p))
