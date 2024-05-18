@@ -22,17 +22,18 @@ from langchain.callbacks import AsyncIteratorCallbackHandler
 
 sys.path.append("../../")
 
-from QA.govermentQA import GoQa
+from QA.govermentQA import GoQa,RAG_QA
 from Custom.ChatGLM import ChatGlm26b
 from Custom.Custom_SparkLLM import Spark
 from Custom.BaiChuan import Baichuan
+from Custom.Qwen import Qwen
 
 history = []
 readable_history = []
 cmd_opts = parser.parse_args()
 
 templet_prompt = """
-         假如你是一名政务问答专家，你需要根据一下给出的内容找出问题的正确答案。
+         假如你是一名政务问答专家，你需要根据以下给出的内容找出问题的正确答案。
          答案只存在给出的内容中，你知道就回答，不要自己编造答案。
          因为你是问答专家你需要仔细分析问题和给出的内容，不要给出错误答案，不要给出多余的答案。
          记住你只需要按给出的内容作答，不需要自己总结。
@@ -40,19 +41,25 @@ templet_prompt = """
          以下是给出的内容：{context}
          问题是:{question}
         """
-llm = Baichuan()
+
+all_templet_example = """{query}"""
+llm = Qwen()
 sparkllm:Optional[Spark] = None
 Baichuanllm:Optional[Baichuan] = None
 chatglmllm:Optional[ChatGlm26b] = None
+Qwenllm:Optional[Qwen] = None
 qa_chain = GoQa(llm=llm,templet_prompt=templet_prompt)
+new_chain = RAG_QA(llm1=llm,templet_prompt=templet_prompt,intemplet_prompt=all_templet_example)
 
-Baichuanllm = llm
+Qwenllm = llm
 
 chat_h = """<h2><center>ChatGLM WebUI</center></h2>"""
 spark_h = """<h2><center>Spark WebUI</h2>"""
 Baichuan_h = """<h2><center>Baichuan WebUI</h2>"""
-Baichuan_h_2 = """<h2><center>Baichuan WebUI 2</h2>"""
-head_h =Baichuan_h
+Baichuan_h_2 = """<h2><center>Baichuan WebUI 2 checkpoint3</h2>"""
+Baichuan_h_3 = """<h2><center>Baichuan WebUI 2 checkpoint2</h2>"""
+Baichuan_h_4 = """<h2><center>new RAG</h2>"""
+head_h = Baichuan_h_4
 
 _css = """
 #del-btn {
@@ -105,7 +112,10 @@ def parse_codeblock(output):
 def predict(query, max_length, top_p, temperature):
     llm.set_llm_temperature(temperature)
     output = ''
-    if head_h == Baichuan_h or head_h == Baichuan_h_2:
+    print(head_h)
+    if head_h == Baichuan_h_4:
+        output = new_chain.exec(query,int(top_p))
+    elif head_h == Baichuan_h or head_h == Baichuan_h_2:
         output = qa_chain.get_no_konwledge_answer(query)
     else :
         output = qa_chain.ask_question(query,int(top_p))
@@ -139,8 +149,12 @@ def load_history(file):
 
 
 def clear_history():
-    if head_h == Baichuan_h:
+    global new_chain
+    new_chain.set_flag()
+    if Baichuanllm is not None:
         Baichuanllm.history = []
+    if Qwenllm is not None:
+        Qwenllm.history = []
     history.clear()
     readable_history.clear()
     return gr.update(value=[])
@@ -150,6 +164,7 @@ def load_chatGlm():
     if  chatglmllm is None:
         chatglmllm = ChatGlm26b()
     qa_chain.set_llm_modle(chatglmllm)
+    global head_h
     head_h = chat_h
     La = gr.HTML(head_h)
     return La,clear_history()
@@ -160,6 +175,7 @@ def load_spark():
     if sparkllm is None:
         sparkllm = Spark()
     qa_chain.set_llm_modle(sparkllm)
+    global head_h
     head_h = spark_h
     La = gr.HTML(head_h)
     return La,clear_history()
@@ -170,6 +186,7 @@ def load_baichuan():
         Baichuanllm = Baichuan()
     Baichuanllm.set_baichuanmodel(1)
     qa_chain.set_llm_modle(Baichuanllm)
+    global head_h
     head_h = Baichuan_h
     La = gr.HTML(head_h)
     return La,clear_history()
@@ -180,7 +197,27 @@ def load_baichuan2():
         Baichuanllm = Baichuan()
     Baichuanllm.set_baichuanmodel(2)
     qa_chain.set_llm_modle(Baichuanllm)
+    global head_h
     head_h = Baichuan_h_2
+    La = gr.HTML(head_h)
+    return La,clear_history()
+def load_baichuan3():
+    global Baichuanllm
+    if Baichuanllm is None:
+        Baichuanllm = Baichuan()
+    Baichuanllm.set_baichuanmodel(3)
+    qa_chain.set_llm_modle(Baichuanllm)
+    global head_h
+    head_h = Baichuan_h_3
+    La = gr.HTML(head_h)
+    return La,clear_history()
+#加载
+def load_baichuan4():
+    global Qwenllm
+    if Qwenllm is None:
+        Qwenllm = Qwen()
+    global head_h
+    head_h = Baichuan_h_4
     La = gr.HTML(head_h)
     return La,clear_history()
 
@@ -195,7 +232,7 @@ def create_ui():
                     with gr.Column(variant="panel"):
                         with gr.Row():
                             max_length = gr.Slider(minimum=4, maximum=4096, step=4, label='Max Length', value=2048)
-                            top_p = gr.Slider(minimum=1, maximum=15, step=1, label='检索返回Top P', value=5)
+                            top_p = gr.Slider(minimum=1, maximum=15, step=1, label='检索返回Top P', value=3)
                         with gr.Row():
                             temperature = gr.Slider(minimum=0.01, maximum=1.0, step=0.01, label='Temperature', value=0.01)
 
@@ -217,7 +254,10 @@ def create_ui():
 
                         with gr.Row():
                             baichuan_load = gr.Button("加载百川模型")
-                            baichuan_load_2 = gr.Button("加载百川模型2")
+                            baichuan_load_2 = gr.Button("加载百川模型2-checkpoint1")
+                        with gr.Row():
+                            baichuan_load_3 = gr.Button("加载百川模型2-checkpoint2")
+                            baichuan_load_4 = gr.Button("new RAG")
             with gr.Column(scale=7):
                 chatbot = gr.Chatbot(elem_id="chat-box", show_label=False).style(height=500)
                 with gr.Row():
@@ -244,6 +284,8 @@ def create_ui():
 
         baichuan_load.click(load_baichuan,outputs=[La,chatbot])
         baichuan_load_2.click(load_baichuan2,outputs=[La,chatbot])
+        baichuan_load_3.click(load_baichuan3, outputs=[La, chatbot])
+        baichuan_load_4.click(load_baichuan4, outputs=[La, chatbot])
 
         save_his_btn.click(save_history)
 

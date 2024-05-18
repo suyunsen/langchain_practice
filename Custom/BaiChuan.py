@@ -79,15 +79,17 @@ class Baichuan(LLM):
     exemodel:Optional['BaichuanModel'] = None
     baichuan1: Optional['BaichuanModel'] = None
     baichuan2: Optional['BaichuanModel'] = None
+    baichuan3: Optional['BaichuanModel'] = None
+    baichuan4: Optional['BaichuanModel'] = None
     class Config:
         arbitrary_types_allowed = True
 
     """Base url to use, if None decides based on model name."""
 
-    def __init__(self,filepath:str=None):
+    def __init__(self):
         super(Baichuan,self).__init__()
-        if filepath is not None:
-            self.filepath = filepath
+        # if filepath is not None:
+        #     self.filepath = filepath
         #量化模型 现在没用
         q_config = BitsAndBytesConfig(load_in_4bit=True,
                                       bnb_4bit_quant_type='nf4',
@@ -97,14 +99,16 @@ class Baichuan(LLM):
         self.extokenizer = AutoTokenizer.from_pretrained(self.filepath,use_fast = False, trust_remote_code=True)
 
         basemodel = AutoModelForCausalLM.from_pretrained(self.filepath, device_map="auto",
-                                                 torch_dtype=torch.float32, trust_remote_code=True)
+                                                 torch_dtype=torch.bfloat16, trust_remote_code=True)
 
         basemodel.generation_config = GenerationConfig.from_pretrained(self.filepath)
 
-        self.baichuan1 = PeftModel.from_pretrained(basemodel,self.peft_path)
-        self.baichuan2 = PeftModel.from_pretrained(basemodel,self.peft_path_2)
+        # self.baichuan1 = PeftModel.from_pretrained(basemodel,self.peft_path)
+        # self.baichuan2 = PeftModel.from_pretrained(basemodel,self.peft_path_2)
+        # self.baichuan3 = PeftModel.from_pretrained(basemodel, _config.BAICHUAN_MODEL_PEFT_PATH_3)
+        self.baichuan4 = basemodel
 
-        self.exemodel = self.baichuan1
+        self.exemodel = basemodel
 
 
     def set_baichuanmodel(self,typ:int):
@@ -112,6 +116,10 @@ class Baichuan(LLM):
             self.exemodel = self.baichuan1
         elif typ == 2:
             self.exemodel = self.baichuan2
+        elif typ == 3:
+            self.exemodel = self.baichuan3
+        elif typ == 4:
+            self.exemodel = self.baichuan4
 
     def get_model(self):
         return  self.exemodel
@@ -176,7 +184,6 @@ class Baichuan(LLM):
             stop = []
         # print(prompt)
         print('------------Baichuan------------------')
-        print(self.history)
         # print(prompt)
         self.history.append({"role": "user",
                          "content": prompt})
@@ -185,5 +192,6 @@ class Baichuan(LLM):
         # self.history = []
         # 开启多轮对话
         self.history.append({"role":"assistant","content":response})
+        print(self.history)
 
         return response

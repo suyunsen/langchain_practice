@@ -18,16 +18,22 @@ HUGGINGFACEHUB_API_TOKEN = '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'
 MODLE_ENBEDDING = '/T53/temp/bigmodel/models/sensenove'
 
 
+#Qwen配置
+Qwen_MODEL_PATH = '/T53/temp/bigmodel/models/qWen'
+
 #baichuan的配置
 
 BAICHUAN_MODEL_PATH = '/T53/temp/bigmodel/models/baichuan'
 BAICHUAN_MODEL_PEFT_PATH = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test/checkpoint-558'
-BAICHUAN_MODEL_PEFT_PATH_2 = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test/checkpoint-1641'
-
+# BAICHUAN_MODEL_PEFT_PATH_2 = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test/checkpoint-1641'
+BAICHUAN_MODEL_PEFT_PATH_2 = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test_01/checkpoint-1200'
+BAICHUAN_MODEL_PEFT_PATH_3 = '/T53/temp/bigmodel/chatGlm_lora_medicinal/saved_files/Baichuan_test_01/checkpoint-900'
+BAICHUAN_MODEL_PEFT_PATH_4 = '/T53/temp/bigmodel/models/baichuan'
 
 #向量数据库匹配
 #分数建议匹配200-500之间，总的分数区间是0-1100左右
-VECTORSTORE_SCORE_THRESHOLD= 300
+VECTORSTORE_SCORE_THRESHOLD= 500
 #加载的向量数据地址
-VECTORSTORE_STORE_PATH = "/T53/temp/bigmodel/langchian/QA/knowledges/faiss_index_test"
+# VECTORSTORE_STORE_PATH = "/T53/temp/bigmodel/langchian/QA/knowledges/faiss_index_test"
+VECTORSTORE_STORE_PATH = "/T53/temp/bigmodel/langchian/QA/knowledges/faiss_index_test_one"
 

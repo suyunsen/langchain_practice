@@ -15,9 +15,9 @@ import _config
 def load_faiss_index():
     embeddings = SBertEmbeddings()
     db = FAISS.load_local(_config.VECTORSTORE_STORE_PATH, embeddings)
-    query = "广东省企业职工基本养老金申领的办理流程"
+    query = "用户需要在窗口办理社保业务。"
     query01 = "wwww"
-    docs_and_scores = db.similarity_search(query=query,k=10,**{"score_threshold":300})
+    docs_and_scores = db.similarity_search(query=query,k=10,**{"score_threshold":400})
     print(len(docs_and_scores))
     for v in docs_and_scores:
         print(v.page_content)
